@@ -99,7 +99,12 @@ app.post('/api/execute', async (req, res) => {
             break;
           case '.bat':
           case '.cmd':
-            command = executable;
+            if (process.platform === 'win32') {
+              command = 'cmd';
+              args = ['/c', executable];
+            } else {
+              command = executable;
+            }
             break;
           default:
             command = executable;
@@ -108,8 +113,14 @@ app.post('/api/execute', async (req, res) => {
 
       case 'system':
       default:
-        // Direct executable
-        command = executable;
+        // Handle system commands and executables
+        const execExt = path.extname(executable).toLowerCase();
+        if ((execExt === '.bat' || execExt === '.cmd') && process.platform === 'win32') {
+          command = 'cmd';
+          args = ['/c', executable];
+        } else {
+          command = executable;
+        }
         break;
     }
 
