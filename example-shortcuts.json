@@ -1,0 +1,100 @@
+[
+  {
+    "id": "1704067200000",
+    "name": "Notepad",
+    "description": "Open Windows Notepad text editor",
+    "executable": "notepad.exe",
+    "parameters": "",
+    "icon": "FileText",
+    "category": "System Tools",
+    "type": "system",
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "lastUsed": "2024-01-15T14:30:00.000Z"
+  },
+  {
+    "id": "1704067260000",
+    "name": "Command Prompt",
+    "description": "Open Windows Command Prompt in Projects folder",
+    "executable": "cmd.exe",
+    "parameters": "/k cd C:\\Projects",
+    "icon": "Terminal",
+    "category": "Development",
+    "type": "system",
+    "workingDirectory": "C:\\Projects",
+    "createdAt": "2024-01-01T00:01:00.000Z",
+    "lastUsed": "2024-01-15T09:15:00.000Z"
+  },
+  {
+    "id": "1704067320000",
+    "name": "GitHub",
+    "description": "Open GitHub repository page",
+    "executable": "https://github.com",
+    "parameters": "/username/repository",
+    "icon": "Globe",
+    "category": "Development",
+    "type": "url",
+    "createdAt": "2024-01-01T00:02:00.000Z"
+  },
+  {
+    "id": "1704067380000",
+    "name": "Build Script",
+    "description": "Run the project build script with production settings",
+    "executable": "build.py",
+    "parameters": "--production --minify",
+    "icon": "Zap",
+    "category": "Development",
+    "type": "script",
+    "workingDirectory": "C:\\Projects\\MyApp",
+    "createdAt": "2024-01-01T00:03:00.000Z",
+    "lastUsed": "2024-01-14T16:45:00.000Z"
+  },
+  {
+    "id": "1704067440000",
+    "name": "Gmail",
+    "description": "Open Gmail web application",
+    "executable": "https://mail.google.com",
+    "parameters": "/inbox",
+    "icon": "ExternalLink",
+    "category": "Productivity",
+    "type": "web-app",
+    "createdAt": "2024-01-01T00:04:00.000Z",
+    "lastUsed": "2024-01-15T08:00:00.000Z"
+  },
+  {
+    "id": "1704067500000",
+    "name": "PowerShell Admin",
+    "description": "Open PowerShell with administrator privileges",
+    "executable": "powershell.exe",
+    "parameters": "-Command \"Start-Process PowerShell -Verb RunAs\"",
+    "icon": "Terminal",
+    "category": "System Tools",
+    "type": "system",
+    "createdAt": "2024-01-01T00:05:00.000Z"
+  },
+  {
+    "id": "1704067560000",
+    "name": "Log Cleanup",
+    "description": "Clean up application log files",
+    "executable": "cleanup.bat",
+    "parameters": "",
+    "icon": "Settings",
+    "category": "Maintenance",
+    "type": "script",
+    "workingDirectory": "C:\\Scripts",
+    "createdAt": "2024-01-01T00:06:00.000Z",
+    "lastUsed": "2024-01-13T10:30:00.000Z"
+  },
+  {
+    "id": "1704067620000",
+    "name": "VS Code",
+    "description": "Open Visual Studio Code in current project",
+    "executable": "code",
+    "parameters": ".",
+    "icon": "FileText",
+    "category": "Development",
+    "type": "system",
+    "workingDirectory": "C:\\Projects\\CurrentProject",
+    "createdAt": "2024-01-01T00:07:00.000Z",
+    "lastUsed": "2024-01-15T11:20:00.000Z"
+  }
+]
