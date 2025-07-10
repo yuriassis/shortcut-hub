@@ -133,6 +133,7 @@ app.post('/api/execute', async (req, res) => {
     console.log(`Executing: ${command} ${args.join(' ')}`);
 
     // Execute the command
+    let responseHandled = false;
     const child = spawn(command, args, {
       ...options,
       detached: false,
@@ -151,6 +152,9 @@ app.post('/api/execute', async (req, res) => {
     });
 
     child.on('close', (code) => {
+      if (responseHandled) return;
+      responseHandled = true;
+      
       if (code === 0) {
         res.json({
           success: true,
@@ -169,6 +173,9 @@ app.post('/api/execute', async (req, res) => {
     });
 
     child.on('error', (error) => {
+      if (responseHandled) return;
+      responseHandled = true;
+      
       res.json({
         success: false,
         error: `Failed to execute command: ${error.message}`,
@@ -178,13 +185,16 @@ app.post('/api/execute', async (req, res) => {
 
     // Handle timeout
     setTimeout(() => {
+      if (responseHandled) return;
+      responseHandled = true;
+      
       if (!child.killed) {
         child.kill();
-        res.json({
-          success: false,
-          error: 'Command timed out after 30 seconds'
-        });
       }
+      res.json({
+        success: false,
+        error: 'Command timed out after 30 seconds'
+      });
     }, 30000);
 
   } catch (error) {
