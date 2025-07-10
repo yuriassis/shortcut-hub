@@ -12,6 +12,7 @@ A powerful local application for organizing and executing your favorite shortcut
 - 🎨 **Beautiful Interface**: Modern, responsive design with real-time status
 - 📁 **Organization**: Group shortcuts by categories
 - 🔍 **Search**: Quickly find shortcuts with instant search
+- 💾 **Persistent Storage**: Shortcuts saved to JSON file with localStorage backup
 - ⚡ **Real-time Execution**: Live feedback and status monitoring
 - 🛡️ **Secure**: Built-in validation and timeout protection
 
@@ -115,6 +116,19 @@ The application shows real-time server status:
 
 ## Configuration
 
+### Data Storage
+
+Shortcuts are automatically saved to a JSON file on the server for persistence:
+- **Primary storage**: `server/shortcuts.json` (created automatically)
+- **Backup storage**: Browser localStorage (fallback when server is offline)
+- **Auto-sync**: Changes are saved immediately to both locations
+
+The app will:
+1. Load shortcuts from the server JSON file on startup
+2. Fall back to localStorage if the server is offline
+3. Migrate localStorage shortcuts to the server when it comes online
+4. Keep both storage methods synchronized
+
 ### Environment Variables
 
 Create a `.env` file in the root directory for custom configuration:
@@ -188,6 +202,15 @@ export default defineConfig({
 ## Troubleshooting
 
 ### Common Issues
+
+**Shortcuts Not Persisting**
+```bash
+# Check if the server has write permissions
+ls -la server/  # Look for shortcuts.json file
+
+# If file doesn't exist, check server logs for permission errors
+npm run server  # Look for "Error saving shortcuts" messages
+```
 
 **Server Won't Start**
 ```bash

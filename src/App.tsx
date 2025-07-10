@@ -45,6 +45,7 @@ function App() {
   const [executionResult, setExecutionResult] = useState<{ message: string; type: 'success' | 'error' | 'warning' } | null>(null);
   const [serverStatus, setServerStatus] = useState<'checking' | 'online' | 'offline'>('checking');
   const [systemInfo, setSystemInfo] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Check server status
   useEffect(() => {
