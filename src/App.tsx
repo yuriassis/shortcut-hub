@@ -45,7 +45,7 @@ function App() {
   const [executionResult, setExecutionResult] = useState<{ message: string; type: 'success' | 'error' | 'warning' } | null>(null);
   const [serverStatus, setServerStatus] = useState<'checking' | 'online' | 'offline'>('checking');
   const [systemInfo, setSystemInfo] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Check server status
   useEffect(() => {
@@ -74,6 +74,7 @@ function App() {
   }, []);
 
   useEffect(() => {
+    setIsLoading(true);
     const savedShortcuts = localStorage.getItem('shortcuts');
     if (savedShortcuts) {
       const parsed = JSON.parse(savedShortcuts);
@@ -144,6 +145,7 @@ function App() {
       ];
       setShortcuts(sampleShortcuts);
     }
+    setIsLoading(false);
   }, []);
 
   useEffect(() => {
