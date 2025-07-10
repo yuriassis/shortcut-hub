@@ -307,7 +307,12 @@ function App() {
         )}
 
         {/* Shortcuts by Category */}
-        {Object.keys(groupedShortcuts).length > 0 ? (
+        {isLoading ? (
+          <div className="text-center py-16">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading shortcuts...</p>
+          </div>
+        ) : Object.keys(groupedShortcuts).length > 0 ? (
           Object.entries(groupedShortcuts).map(([category, categoryShortcuts]) => (
             <div key={category} className="mb-8">
               <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
