@@ -429,10 +429,25 @@ function ShortcutCard({ shortcut, onExecute, onEdit, onDelete, serverOnline }: S
   const IconComponent = ICON_OPTIONS.find(opt => opt.name === shortcut.icon)?.icon || Terminal;
   const typeInfo = SHORTCUT_TYPES.find(t => t.value === shortcut.type);
 
+  // Format date as dd/mm/yy
+  const formatDate = (date: Date) => {
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear().toString().slice(-2);
+    return `${day}/${month}/${year}`;
+  };
+
   return (
-    <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 p-4 border border-gray-100">
+    <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 p-3 border border-gray-100 relative overflow-hidden">
+      {/* Colored stripe on the right */}
+      <div className={`absolute top-0 right-0 w-1 h-full ${
+        shortcut.type === 'url' || shortcut.type === 'web-app' ? 'bg-green-500' :
+        shortcut.type === 'system' ? 'bg-blue-500' :
+        'bg-purple-500'
+      }`} />
+      
       <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <div className={`p-1.5 rounded-md ${
             shortcut.type === 'url' || shortcut.type === 'web-app' ? 'bg-green-100' :
             shortcut.type === 'system' ? 'bg-blue-100' :
@@ -442,62 +457,50 @@ function ShortcutCard({ shortcut, onExecute, onEdit, onDelete, serverOnline }: S
               shortcut.type === 'url' || shortcut.type === 'web-app' ? 'text-green-600' :
               shortcut.type === 'system' ? 'text-blue-600' :
               'text-purple-600'
-            }`} size={18} />
+            }`} size={16} />
           </div>
           <div>
-            <h3 className="font-medium text-gray-900 text-sm leading-tight">{shortcut.name}</h3>
+            <h3 className="font-medium text-gray-900 text-xs leading-tight">{shortcut.name}</h3>
             <p className="text-xs text-gray-500">{shortcut.category}</p>
           </div>
         </div>
         <div className="flex items-center gap-1">
           <button
             onClick={onEdit}
-            className="p-1 hover:bg-gray-100 rounded text-gray-400 hover:text-gray-600 transition-colors duration-200"
+            className="p-0.5 hover:bg-gray-100 rounded text-gray-400 hover:text-gray-600 transition-colors duration-200"
           >
-            <Edit size={14} />
+            <Edit size={12} />
           </button>
           <button
             onClick={onDelete}
-            className="p-1 hover:bg-gray-100 rounded text-gray-400 hover:text-red-600 transition-colors duration-200"
+            className="p-0.5 hover:bg-gray-100 rounded text-gray-400 hover:text-red-600 transition-colors duration-200"
           >
-            <Trash2 size={14} />
+            <Trash2 size={12} />
           </button>
         </div>
       </div>
 
-      <p className="text-gray-600 text-xs mb-3 line-clamp-2">{shortcut.description}</p>
+      <p className="text-gray-600 text-xs mb-2 line-clamp-2">{shortcut.description}</p>
 
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className={`text-xs px-1.5 py-0.5 rounded ${
-            shortcut.type === 'url' || shortcut.type === 'web-app' ? 'bg-green-100 text-green-700' :
-            shortcut.type === 'system' ? 'bg-blue-100 text-blue-700' :
-            'bg-purple-100 text-purple-700'
-          }`}>
-            {shortcut.type === 'url' ? 'URL' : 
-             shortcut.type === 'web-app' ? 'Web' : 
-             shortcut.type === 'system' ? 'System' : 'Script'}
-          </span>
+        <div>
           {shortcut.lastUsed && (
             <span className="text-xs text-gray-400">
-              {shortcut.lastUsed.toLocaleDateString()}
+              {formatDate(shortcut.lastUsed)}
             </span>
           )}
         </div>
         <button
           onClick={() => onExecute(shortcut)}
           disabled={!serverOnline}
-          className={`px-3 py-1.5 rounded-md font-medium transition-colors duration-200 flex items-center gap-1.5 text-white text-sm ${
+          className={`p-1.5 rounded-md transition-colors duration-200 flex items-center text-white ${
             !serverOnline ? 'bg-gray-400 cursor-not-allowed' :
             shortcut.type === 'url' || shortcut.type === 'web-app' ? 'bg-green-600 hover:bg-green-700' :
             shortcut.type === 'system' ? 'bg-blue-600 hover:bg-blue-700' :
             'bg-purple-600 hover:bg-purple-700'
           }`}
         >
-          <Play size={14} />
-          {shortcut.type === 'url' ? 'Open' : 
-           shortcut.type === 'web-app' ? 'Launch' : 
-           'Execute'}
+          <Play size={12} />
         </button>
       </div>
     </div>
