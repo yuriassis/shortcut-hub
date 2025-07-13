@@ -96,8 +96,8 @@ app.post('/api/execute', async (req, res) => {
       case 'web-app':
         // For URLs, use the system's default browser
         if (process.platform === 'win32') {
-          command = 'start';
-          args = ['', executable + (parameters ? parameters : '')];
+          command = 'cmd';
+          args = ['/c', 'start', '""', executable + (parameters ? parameters : '')];
         } else if (process.platform === 'darwin') {
           command = 'open';
           args = [executable + (parameters ? parameters : '')];
