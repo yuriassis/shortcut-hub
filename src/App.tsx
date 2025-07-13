@@ -73,84 +73,109 @@ function App() {
     return () => clearInterval(interval);
   }, []);
 
+  // Load shortcuts from server or localStorage
   useEffect(() => {
-    setIsLoading(true);
-    const savedShortcuts = localStorage.getItem('shortcuts');
-    if (savedShortcuts) {
-      const parsed = JSON.parse(savedShortcuts);
-      setShortcuts(parsed.map((s: any) => ({
-        ...s,
-        createdAt: new Date(s.createdAt),
-        lastUsed: s.lastUsed ? new Date(s.lastUsed) : undefined
-      })));
-    } else {
-      // Add some sample shortcuts for different platforms
-      const sampleShortcuts: Shortcut[] = [
-        {
-          id: '1',
-          name: 'Notepad',
-          description: 'Open Windows Notepad',
-          executable: 'notepad.exe',
-          parameters: '',
-          icon: 'FileText',
-          category: 'System',
-          type: 'system',
-          createdAt: new Date(),
-        },
-        {
-          id: '2',
-          name: 'Command Prompt',
-          description: 'Open Windows Command Prompt',
-          executable: 'cmd.exe',
-          parameters: '',
-          icon: 'Terminal',
-          category: 'System',
-          type: 'system',
-          createdAt: new Date(),
-        },
-        {
-          id: '3',
-          name: 'GitHub',
-          description: 'Open GitHub in browser',
-          executable: 'https://github.com',
-          parameters: '',
-          icon: 'Globe',
-          category: 'Development',
-          type: 'url',
-          createdAt: new Date(),
-        },
-        {
-          id: '4',
-          name: 'Python Script',
-          description: 'Run a Python script',
-          executable: 'script.py',
-          parameters: '',
-          icon: 'Zap',
-          category: 'Scripts',
-          type: 'script',
-          workingDirectory: '',
-          createdAt: new Date(),
-        },
-        {
-          id: '5',
-          name: 'PowerShell',
-          description: 'Open PowerShell',
-          executable: 'powershell.exe',
-          parameters: '',
-          icon: 'Terminal',
-          category: 'System',
-          type: 'system',
-          createdAt: new Date(),
-        },
-      ];
-      setShortcuts(sampleShortcuts);
-    }
-    setIsLoading(false);
-  }, []);
+    const loadShortcuts = async () => {
+      setIsLoading(true);
+      
+      try {
+        // Try to load from server first
+        if (serverStatus === 'online') {
+          const response = await fetch(`${API_BASE_URL}/shortcuts`);
+          if (response.ok) {
+            const result = await response.json();
+            if (result.success && result.shortcuts) {
+              const serverShortcuts = result.shortcuts.map((s: any) => ({
+                ...s,
+                createdAt: new Date(s.createdAt),
+                lastUsed: s.lastUsed ? new Date(s.lastUsed) : undefined
+              }));
+              setShortcuts(serverShortcuts);
+              
+              // Also save to localStorage as backup
+              localStorage.setItem('shortcuts', JSON.stringify(serverShortcuts));
+              setIsLoading(false);
+              return;
+            }
+          }
+        }
+        
+        // Fallback to localStorage
+        const savedShortcuts = localStorage.getItem('shortcuts');
+        if (savedShortcuts) {
+          const parsed = JSON.parse(savedShortcuts);
+          const localShortcuts = parsed.map((s: any) => ({
+            ...s,
+            createdAt: new Date(s.createdAt),
+            lastUsed: s.lastUsed ? new Date(s.lastUsed) : undefined
+          }));
+          setShortcuts(localShortcuts);
+          
+          // If server is online, migrate localStorage data to server
+          if (serverStatus === 'online') {
+            await saveShortcutsToServer(localShortcuts);
+          }
+        } else {
+          // No shortcuts found, start with empty array
+          setShortcuts([]);
+        }
+      } catch (error) {
+        console.error('Error loading shortcuts:', error);
+        // Fallback to localStorage on error
+        const savedShortcuts = localStorage.getItem('shortcuts');
+        if (savedShortcuts) {
+          const parsed = JSON.parse(savedShortcuts);
+          setShortcuts(parsed.map((s: any) => ({
+            ...s,
+            createdAt: new Date(s.createdAt),
+            lastUsed: s.lastUsed ? new Date(s.lastUsed) : undefined
+          })));
+        } else {
+          setShortcuts([]);
+        }
+      }
+      
+      setIsLoading(false);
+    };
 
-  useEffect(() => {
+    // Only load shortcuts after server status is determined
+    if (serverStatus !== 'checking') {
+      loadShortcuts();
+    }
+  }, [serverStatus]);
+
+  // Save shortcuts to server
+  const saveShortcutsToServer = async (shortcutsToSave: Shortcut[]) => {
+    if (serverStatus !== 'online') return;
+    
+    try {
+      await fetch(`${API_BASE_URL}/shortcuts`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ shortcuts: shortcutsToSave }),
+      });
+    } catch (error) {
+      console.error('Error saving shortcuts to server:', error);
+    }
+  };
+
+  // Save shortcuts to both localStorage and server
+  const saveShortcuts = async (shortcutsToSave: Shortcut[]) => {
+    // Save to localStorage immediately
     localStorage.setItem('shortcuts', JSON.stringify(shortcuts));
-  }, [shortcuts]);
+    
+    // Save to server if online
+    await saveShortcutsToServer(shortcutsToSave);
+  };
+
+  // Auto-save when shortcuts change
+  useEffect(() => {
+    if (shortcuts.length > 0) {
+      saveShortcuts(shortcuts);
+    }
+  }, [shortcuts, serverStatus]);
 
   const handleCreateShortcut = (shortcut: Omit<Shortcut, 'id' | 'createdAt'>) => {
     const newShortcut: Shortcut = {
@@ -158,18 +183,21 @@ function App() {
       id: Date.now().toString(),
       createdAt: new Date(),
     };
-    setShortcuts([...shortcuts, newShortcut]);
+    const updatedShortcuts = [...shortcuts, newShortcut];
+    setShortcuts(updatedShortcuts);
     setShowModal(false);
   };
 
   const handleUpdateShortcut = (updatedShortcut: Shortcut) => {
-    setShortcuts(shortcuts.map(s => s.id === updatedShortcut.id ? updatedShortcut : s));
+    const updatedShortcuts = shortcuts.map(s => s.id === updatedShortcut.id ? updatedShortcut : s);
+    setShortcuts(updatedShortcuts);
     setEditingShortcut(null);
     setShowModal(false);
   };
 
   const handleDeleteShortcut = (id: string) => {
-    setShortcuts(shortcuts.filter(s => s.id !== id));
+    const updatedShortcuts = shortcuts.filter(s => s.id !== id);
+    setShortcuts(updatedShortcuts);
   };
 
   const handleExecuteShortcut = async (shortcut: Shortcut) => {

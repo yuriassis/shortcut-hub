@@ -5,6 +5,7 @@ import { promisify } from 'util';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
+import { promises as fsPromises } from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -12,10 +13,35 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = 3001;
 const execAsync = promisify(exec);
+const SHORTCUTS_FILE = path.join(__dirname, 'shortcuts.json');
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Helper functions for JSON file operations
+const loadShortcuts = async () => {
+  try {
+    const data = await fsPromises.readFile(SHORTCUTS_FILE, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      // File doesn't exist, return empty array
+      return [];
+    }
+    throw error;
+  }
+};
+
+const saveShortcuts = async (shortcuts) => {
+  try {
+    await fsPromises.writeFile(SHORTCUTS_FILE, JSON.stringify(shortcuts, null, 2), 'utf8');
+    return true;
+  } catch (error) {
+    console.error('Error saving shortcuts:', error);
+    return false;
+  }
+};
 
 // Security: Basic validation for executable paths
 const isValidExecutable = (executable) => {
@@ -225,6 +251,48 @@ app.get('/api/system-info', (req, res) => {
     nodeVersion: process.version,
     cwd: process.cwd()
   });
+});
+
+// Load shortcuts endpoint
+app.get('/api/shortcuts', async (req, res) => {
+  try {
+    const shortcuts = await loadShortcuts();
+    res.json({ success: true, shortcuts });
+  } catch (error) {
+    console.error('Error loading shortcuts:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to load shortcuts',
+      shortcuts: [] 
+    });
+  }
+});
+
+// Save shortcuts endpoint
+app.post('/api/shortcuts', async (req, res) => {
+  try {
+    const { shortcuts } = req.body;
+    
+    if (!Array.isArray(shortcuts)) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Shortcuts must be an array' 
+      });
+    }
+
+    const saved = await saveShortcuts(shortcuts);
+    if (saved) {
+      res.json({ success: true, message: 'Shortcuts saved successfully' });
+    } else {
+      res.status(500).json({ success: false, error: 'Failed to save shortcuts' });
+    }
+  } catch (error) {
+    console.error('Error saving shortcuts:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to save shortcuts' 
+    });
+  }
 });
 
 app.listen(PORT, () => {
