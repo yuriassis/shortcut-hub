@@ -19,6 +19,11 @@ app.use(express.json());
 
 // Security: Basic validation for executable paths
 const isValidExecutable = (executable) => {
+  // Allow URLs for web shortcuts
+  if (executable.startsWith('http://') || executable.startsWith('https://') || executable.startsWith('file://')) {
+    return true;
+  }
+  
   // Allow common executable extensions and scripts
   const validExtensions = ['.exe', '.bat', '.cmd', '.ps1', '.sh', '.py', '.js', '.mjs', '.ts'];
   const hasValidExtension = validExtensions.some(ext => executable.toLowerCase().endsWith(ext));
