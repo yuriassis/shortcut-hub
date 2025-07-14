@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Search, Play, Edit, Trash2, Download, Upload, Terminal, Settings, Folder, FileText, Coffee, Zap, Globe, ExternalLink, AlertCircle, Server, CheckCircle, XCircle } from 'lucide-react';
+import { Plus, Search, Play, Edit, Trash2, Download, Upload, Terminal, Settings, Folder, FileText, Coffee, Zap, Globe, ExternalLink, AlertCircle, Server, CheckCircle, XCircle, ChevronDown, ChevronRight } from 'lucide-react';
 
 interface Shortcut {
   id: string;
@@ -46,6 +46,7 @@ function App() {
   const [serverStatus, setServerStatus] = useState<'checking' | 'online' | 'offline'>('checking');
   const [systemInfo, setSystemInfo] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [collapsedCategories, setCollapsedCategories] = useState<Set<string>>(new Set());
 
   // Check server status
   useEffect(() => {
@@ -200,6 +201,16 @@ function App() {
     setShortcuts(updatedShortcuts);
   };
 
+  const toggleCategory = (category: string) => {
+    const newCollapsed = new Set(collapsedCategories);
+    if (newCollapsed.has(category)) {
+      newCollapsed.delete(category);
+    } else {
+      newCollapsed.add(category);
+    }
+    setCollapsedCategories(newCollapsed);
+  };
+
   const handleExecuteShortcut = async (shortcut: Shortcut) => {
     if (serverStatus !== 'online') {
       setExecutionResult({
@@ -345,26 +356,36 @@ function App() {
         ) : Object.keys(groupedShortcuts).length > 0 ? (
           Object.entries(groupedShortcuts).map(([category, categoryShortcuts]) => (
             <div key={category} className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <button
+                onClick={() => toggleCategory(category)}
+                className="w-full text-left text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2 hover:text-blue-600 transition-colors duration-200"
+              >
+                {collapsedCategories.has(category) ? (
+                  <ChevronRight size={20} className="text-blue-600" />
+                ) : (
+                  <ChevronDown size={20} className="text-blue-600" />
+                )}
                 <Folder size={20} className="text-blue-600" />
                 {category}
                 <span className="text-sm font-normal text-gray-500">({categoryShortcuts.length})</span>
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-                {categoryShortcuts.map((shortcut) => (
-                  <ShortcutCard
-                    key={shortcut.id}
-                    shortcut={shortcut}
-                    onExecute={handleExecuteShortcut}
-                    onEdit={() => {
-                      setEditingShortcut(shortcut);
-                      setShowModal(true);
-                    }}
-                    onDelete={() => handleDeleteShortcut(shortcut.id)}
-                    serverOnline={serverStatus === 'online'}
-                  />
-                ))}
-              </div>
+              </button>
+              {!collapsedCategories.has(category) && (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-3">
+                  {categoryShortcuts.map((shortcut) => (
+                    <ShortcutCard
+                      key={shortcut.id}
+                      shortcut={shortcut}
+                      onExecute={handleExecuteShortcut}
+                      onEdit={() => {
+                        setEditingShortcut(shortcut);
+                        setShowModal(true);
+                      }}
+                      onDelete={() => handleDeleteShortcut(shortcut.id)}
+                      serverOnline={serverStatus === 'online'}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           ))
         ) : (
@@ -438,7 +459,7 @@ function ShortcutCard({ shortcut, onExecute, onEdit, onDelete, serverOnline }: S
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 p-3 border border-gray-100 relative overflow-hidden">
+    <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 p-2 border border-gray-100 relative overflow-hidden w-full max-w-[160px]">
       {/* Colored stripe on the right */}
       <div className={`absolute top-0 right-0 w-1 h-full ${
         shortcut.type === 'url' || shortcut.type === 'web-app' ? 'bg-green-500' :
@@ -446,7 +467,7 @@ function ShortcutCard({ shortcut, onExecute, onEdit, onDelete, serverOnline }: S
         'bg-purple-500'
       }`} />
       
-      <div className="flex items-start justify-between mb-3">
+      <div className="flex items-start justify-between mb-2">
         <div className="flex items-center gap-2">
           <div className={`p-1.5 rounded-md ${
             shortcut.type === 'url' || shortcut.type === 'web-app' ? 'bg-green-100' :
@@ -457,30 +478,29 @@ function ShortcutCard({ shortcut, onExecute, onEdit, onDelete, serverOnline }: S
               shortcut.type === 'url' || shortcut.type === 'web-app' ? 'text-green-600' :
               shortcut.type === 'system' ? 'text-blue-600' :
               'text-purple-600'
-            }`} size={16} />
-          </div>
-          <div>
-            <h3 className="font-medium text-gray-900 text-xs leading-tight">{shortcut.name}</h3>
-            <p className="text-xs text-gray-500">{shortcut.category}</p>
+            }`} size={14} />
           </div>
         </div>
         <div className="flex items-center gap-1">
           <button
             onClick={onEdit}
-            className="p-0.5 hover:bg-gray-100 rounded text-gray-400 hover:text-gray-600 transition-colors duration-200"
+            className="p-1 hover:bg-gray-100 rounded text-gray-400 hover:text-gray-600 transition-colors duration-200"
           >
-            <Edit size={12} />
+            <Edit size={10} />
           </button>
           <button
             onClick={onDelete}
-            className="p-0.5 hover:bg-gray-100 rounded text-gray-400 hover:text-red-600 transition-colors duration-200"
+            className="p-1 hover:bg-gray-100 rounded text-gray-400 hover:text-red-600 transition-colors duration-200"
           >
-            <Trash2 size={12} />
+            <Trash2 size={10} />
           </button>
         </div>
       </div>
 
-      <p className="text-gray-600 text-xs mb-2 line-clamp-2">{shortcut.description}</p>
+      <div className="mb-2">
+        <h3 className="font-medium text-gray-900 text-xs leading-tight mb-1 line-clamp-2">{shortcut.name}</h3>
+        <p className="text-xs text-gray-500 mb-1">{shortcut.category}</p>
+      </div>
 
       <div className="flex items-center justify-between">
         <div>
@@ -493,14 +513,14 @@ function ShortcutCard({ shortcut, onExecute, onEdit, onDelete, serverOnline }: S
         <button
           onClick={() => onExecute(shortcut)}
           disabled={!serverOnline}
-          className={`p-1.5 rounded-md transition-colors duration-200 flex items-center text-white ${
+          className={`p-1 rounded-md transition-colors duration-200 flex items-center text-white ${
             !serverOnline ? 'bg-gray-400 cursor-not-allowed' :
             shortcut.type === 'url' || shortcut.type === 'web-app' ? 'bg-green-600 hover:bg-green-700' :
             shortcut.type === 'system' ? 'bg-blue-600 hover:bg-blue-700' :
             'bg-purple-600 hover:bg-purple-700'
           }`}
         >
-          <Play size={12} />
+          <Play size={10} />
         </button>
       </div>
     </div>
