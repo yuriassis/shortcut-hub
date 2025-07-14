@@ -2,19 +2,19 @@
 
 A powerful local application for organizing and executing your favorite shortcuts, scripts, and programs from a beautiful web interface.
 
-![Shortcut Hub Screenshot](https://via.placeholder.com/800x400/3B82F6/FFFFFF?text=Shortcut+Hub+Interface)
-
 ## Features
 
-- 🚀 **Execute Anything**: Run system programs, scripts, URLs, and custom executables
+- 🚀 **Execute Anything**: Run system programs, scripts, URLs, and web applications
 - 🎯 **Multi-Platform**: Works on Windows, macOS, and Linux
 - 📝 **Script Support**: Python, Node.js, PowerShell, Bash, and batch files
-- 🎨 **Beautiful Interface**: Modern, responsive design with real-time status
-- 📁 **Organization**: Group shortcuts by categories
+- 🎨 **Beautiful Interface**: Compact card-based design with real-time status monitoring
+- 📁 **Smart Organization**: Collapsible categories with visual type indicators
 - 🔍 **Search**: Quickly find shortcuts with instant search
-- 💾 **Persistent Storage**: Shortcuts saved to JSON file with localStorage backup
+- 💾 **Dual Storage**: JSON file persistence with localStorage backup
 - ⚡ **Real-time Execution**: Live feedback and status monitoring
 - 🛡️ **Secure**: Built-in validation and timeout protection
+- 📱 **Responsive Design**: Optimized for all screen sizes with up to 8 columns
+- 🎨 **Visual Type Coding**: Color-coded stripes indicate shortcut types
 
 ## Quick Start
 
@@ -49,7 +49,7 @@ A powerful local application for organizing and executing your favorite shortcut
 
 ### Creating Shortcuts
 
-1. Click the **"Add Shortcut"** button
+1. Click the **"Add Shortcut"** button in the top-right corner
 2. Choose the shortcut type:
    - **URL/Website**: Open websites in your default browser
    - **Web App**: Launch web applications
@@ -59,12 +59,32 @@ A powerful local application for organizing and executing your favorite shortcut
 3. Fill in the details:
    - **Name**: Display name for your shortcut
    - **Description**: What this shortcut does
-   - **Target**: Path to executable, script, or URL
+   - **Executable Path/URL**: Path to executable, script, or URL
    - **Parameters**: Additional arguments (optional)
    - **Working Directory**: Custom working directory (optional)
    - **Category**: Organize shortcuts into groups
    - **Icon**: Choose from available icons
 
+### Interface Features
+
+#### Compact Card Design
+- **Visual Type Indicators**: Colored stripes on the right edge of each card
+  - 🟢 **Green**: URLs and Web Apps
+  - 🔵 **Blue**: System Commands  
+  - 🟣 **Purple**: Scripts
+- **Compact Information**: Shows only essential details (name, category, last used date)
+- **Quick Actions**: Large execution button with edit/delete options
+
+#### Collapsible Categories
+- **Click to Toggle**: Click category headers to expand/collapse sections
+- **Visual Indicators**: Chevron arrows show current state
+- **Efficient Organization**: Focus on relevant shortcuts by hiding others
+- **Responsive Grid**: 2-8 columns depending on screen size
+
+#### Search and Filter
+- **Instant Search**: Filter shortcuts by name, description, category, or type
+- **Real-time Results**: Updates as you type
+- **Cross-category Search**: Finds shortcuts across all categories
 ### Shortcut Types & Examples
 
 #### System Commands
@@ -101,11 +121,12 @@ Type: Web App
 
 ### Managing Shortcuts
 
-- **Execute**: Click the colored button on each shortcut card
+- **Execute**: Click the large colored play button on each shortcut card
 - **Edit**: Click the edit icon to modify shortcut details
 - **Delete**: Click the trash icon to remove shortcuts
 - **Search**: Use the search bar to filter shortcuts
-- **Categories**: Shortcuts are automatically grouped by category
+- **Categories**: Click category headers to expand/collapse groups
+- **Visual Types**: Identify shortcut types by colored stripes (Green=URL, Blue=System, Purple=Script)
 
 ### Server Status
 
@@ -113,21 +134,23 @@ The application shows real-time server status:
 - 🟢 **Online**: Backend is running and ready
 - 🔴 **Offline**: Backend is not accessible
 - 🟡 **Checking**: Verifying connection status
+- **System Info**: Displays platform and architecture when connected
 
 ## Configuration
 
 ### Data Storage
 
-Shortcuts are automatically saved to a JSON file on the server for persistence:
-- **Primary storage**: `server/shortcuts.json` (created automatically)
+Shortcuts are automatically saved using a dual-storage system:
+- **Primary storage**: `server/shortcuts.json` (auto-created if missing)
 - **Backup storage**: Browser localStorage (fallback when server is offline)
 - **Auto-sync**: Changes are saved immediately to both locations
 
 The app will:
-1. Load shortcuts from the server JSON file on startup
-2. Fall back to localStorage if the server is offline
-3. Migrate localStorage shortcuts to the server when it comes online
-4. Keep both storage methods synchronized
+1. **Smart Loading**: Try server first, fallback to localStorage
+2. **Auto-migration**: Move localStorage data to server when available  
+3. **Real-time Sync**: Save changes to both storage methods instantly
+4. **Offline Support**: Continue working when server is unavailable
+5. **Data Recovery**: Automatically restore from backup when server returns
 
 ### Environment Variables
 
@@ -205,11 +228,14 @@ export default defineConfig({
 
 **Shortcuts Not Persisting**
 ```bash
-# Check if the server has write permissions
-ls -la server/  # Look for shortcuts.json file
+# Check if shortcuts.json was created
+ls -la server/shortcuts.json
 
-# If file doesn't exist, check server logs for permission errors
-npm run server  # Look for "Error saving shortcuts" messages
+# Check server logs for errors
+npm run server  # Look for file creation/save errors
+
+# Verify server endpoints are working
+curl http://localhost:3001/api/shortcuts  # Should return shortcuts array
 ```
 
 **Server Won't Start**
@@ -224,10 +250,11 @@ taskkill /PID <PID> /F  # Windows
 ```
 
 **Shortcuts Won't Execute**
-1. Verify the server is running (green status indicator)
-2. Check the executable path is correct
-3. Ensure you have permissions to run the target
-4. Check the console for error messages
+1. **Check Server Status**: Look for green "Server: online" indicator
+2. **Verify Paths**: Ensure executable paths are correct and accessible
+3. **Check Permissions**: Verify you can run the target manually
+4. **Review Errors**: Check browser console and server logs
+5. **Test Manually**: Try running the command in terminal first
 
 **Scripts Not Working**
 1. Verify the interpreter is installed (Python, Node.js, etc.)

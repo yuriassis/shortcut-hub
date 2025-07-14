@@ -1,6 +1,6 @@
 # Usage Examples
 
-This document provides practical examples of how to use Shortcut Hub for various common tasks and scenarios.
+This document provides practical examples of how to use Shortcut Hub for various common tasks and scenarios. All shortcuts are automatically saved to both a JSON file and localStorage for reliability.
 
 ## Basic Examples
 
@@ -451,6 +451,14 @@ This document provides practical examples of how to use Shortcut Hub for various
 
 ## Tips for Creating Effective Shortcuts
 
+### Visual Organization
+- **Use Color Coding**: Shortcuts are automatically color-coded by type
+  - Green stripe: URLs and Web Apps
+  - Blue stripe: System Commands
+  - Purple stripe: Scripts
+- **Category Grouping**: Organize related shortcuts into logical categories
+- **Descriptive Names**: Use clear, action-oriented names for easy identification
+
 ### Naming Conventions
 - Use descriptive, action-oriented names
 - Include the target application or script purpose
@@ -470,11 +478,12 @@ This document provides practical examples of how to use Shortcut Hub for various
 - Group related shortcuts together
 - Use consistent category names
 - Consider workflow-based categories (Development, Productivity, etc.)
+- Categories are collapsible - organize for easy navigation
 
 ### Icon Selection
 - Choose icons that represent the function or tool
 - Use consistent icons for similar types of shortcuts
-- Consider color coding by category
+- Icons work with the color stripe system for quick identification
 
 ### Error Prevention
 - Test shortcuts after creation
@@ -482,4 +491,10 @@ This document provides practical examples of how to use Shortcut Hub for various
 - Check permissions for script execution
 - Use appropriate shortcut types for different targets
 
-These examples should help you get started with creating your own shortcuts for various tasks and workflows. Remember to test each shortcut after creation to ensure it works as expected in your environment.
+### Interface Tips
+- **Compact View**: Cards are designed to show many shortcuts at once
+- **Quick Access**: Large execution buttons for easy clicking
+- **Category Management**: Collapse unused categories to focus on relevant shortcuts
+- **Search Functionality**: Use search to quickly find shortcuts across all categories
+
+These examples should help you get started with creating your own shortcuts for various tasks and workflows. The compact interface allows you to see many shortcuts at once while maintaining full functionality. Remember to test each shortcut after creation to ensure it works as expected in your environment.

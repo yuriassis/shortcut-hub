@@ -56,20 +56,26 @@ interface Shortcut {
 - `searchTerm`: Current search filter
 - `serverStatus`: Backend connection status
 - `executionResult`: Feedback from command execution
+- `systemInfo`: Server platform and architecture information
+- `isLoading`: Loading state for shortcuts
+- `collapsedCategories`: Set of collapsed category names
 
 **Key Features:**
 - Real-time server status monitoring
-- Local storage persistence
+- Dual storage system (JSON file + localStorage)
 - Search and filtering
-- Category-based organization
+- Collapsible category organization
+- Compact card-based interface
+- Visual type indicators with colored stripes
 
 #### ShortcutCard Component
 
-Renders individual shortcut cards with:
-- Dynamic icons based on shortcut type
-- Color-coded execution buttons
-- Last used tracking
-- Edit/delete functionality
+Renders compact shortcut cards with:
+- **Visual Design**: Colored stripe indicating shortcut type (Green/Blue/Purple)
+- **Compact Layout**: Fixed width (160px) with essential information only
+- **Smart Information**: Shows name, category, and last used date (dd/mm/yy format)
+- **Quick Actions**: Large execution button with small edit/delete icons
+- **Responsive Grid**: Adapts from 2-8 columns based on screen size
 
 #### ShortcutModal Component
 
@@ -81,19 +87,41 @@ Form component for creating/editing shortcuts:
 
 ### State Management
 
-The application uses React's built-in state management:
+The application uses React's built-in state management with enhanced persistence:
 
 ```typescript
-// Shortcuts are persisted to localStorage
-useEffect(() => {
+// Dual storage system - save to both localStorage and server
+const saveShortcuts = async (shortcutsToSave: Shortcut[]) => {
   localStorage.setItem('shortcuts', JSON.stringify(shortcuts));
-}, [shortcuts]);
+  await saveShortcutsToServer(shortcutsToSave);
+};
+
+// Smart loading - try server first, fallback to localStorage
+useEffect(() => {
+  const loadShortcuts = async () => {
+    if (serverStatus === 'online') {
+      // Try server first
+      const response = await fetch(`${API_BASE_URL}/shortcuts`);
+      if (response.ok) {
+        const result = await response.json();
+        setShortcuts(result.shortcuts);
+        return;
+      }
+    }
+    // Fallback to localStorage
+    const saved = localStorage.getItem('shortcuts');
+    if (saved) setShortcuts(JSON.parse(saved));
+  };
+}, [serverStatus]);
 
 // Server status is checked every 10 seconds
 useEffect(() => {
   const interval = setInterval(checkServerStatus, 10000);
   return () => clearInterval(interval);
 }, []);
+
+// Category collapse state management
+const [collapsedCategories, setCollapsedCategories] = useState<Set<string>>(new Set());
 ```
 
 ### API Communication
@@ -131,9 +159,11 @@ const response = await fetch(`${API_BASE_URL}/execute`, {
 
 **Core Functionality:**
 - REST API endpoints for shortcut execution
+- JSON file-based shortcut persistence
 - Security validation for executable paths
 - Multi-platform command execution
 - Process management and timeout handling
+- Automatic file creation for shortcuts.json
 
 **Key Endpoints:**
 
@@ -141,6 +171,8 @@ const response = await fetch(`${API_BASE_URL}/execute`, {
 POST /api/execute    // Execute a shortcut
 GET  /api/health     // Server health check
 GET  /api/system-info // System information
+GET  /api/shortcuts  // Load shortcuts from JSON file
+POST /api/shortcuts  // Save shortcuts to JSON file
 ```
 
 ### Command Execution Engine
@@ -151,8 +183,8 @@ The backend handles different types of executables:
 ```javascript
 // Cross-platform URL opening
 if (process.platform === 'win32') {
-  command = 'start';
-  args = ['', executable + parameters];
+  command = 'cmd';
+  args = ['/c', 'start', '""', executable + parameters];
 } else if (process.platform === 'darwin') {
   command = 'open';
   args = [executable + parameters];
@@ -242,12 +274,20 @@ child.on('close', (code) => {
 
 ## Data Flow
 
+### Shortcut Storage Flow
+1. **Auto-creation**: Server creates `shortcuts.json` if it doesn't exist
+2. **Dual save**: Changes saved to both localStorage and JSON file
+3. **Smart loading**: Server file takes priority, localStorage as backup
+4. **Migration**: localStorage data moved to server when available
+5. **Sync**: Both storage methods kept synchronized
+
 ### Shortcut Creation Flow
 1. User opens modal and fills form
 2. Frontend validates input
 3. Shortcut object created with unique ID
-4. Added to state and persisted to localStorage
-5. UI updates to show new shortcut
+4. Added to state and saved to both storage systems
+5. UI updates with new shortcut in appropriate category
+6. Category auto-expands if collapsed
 
 ### Shortcut Execution Flow
 1. User clicks execute button
@@ -257,6 +297,7 @@ child.on('close', (code) => {
 5. Process output captured and returned
 6. Frontend displays execution result
 7. Shortcut's `lastUsed` timestamp updated
+8. Changes auto-saved to both storage systems
 
 ### Server Status Monitoring
 1. Frontend polls `/api/health` every 10 seconds
@@ -267,12 +308,15 @@ child.on('close', (code) => {
 ## Performance Considerations
 
 ### Frontend Optimizations
-- **Component Memoization**: Prevent unnecessary re-renders
+- **Efficient Rendering**: Compact cards with minimal re-renders
 - **Efficient Filtering**: Client-side search with debouncing
-- **Lazy Loading**: Icons loaded on demand
-- **Local Storage**: Instant app startup with cached data
+- **Smart State Management**: Category collapse state persisted during session
+- **Dual Storage**: Instant app startup with cached data
+- **Responsive Design**: Optimized grid layouts for all screen sizes
 
 ### Backend Optimizations
+- **File System Operations**: Async file operations with proper error handling
+- **Auto-creation**: JSON file created automatically if missing
 - **Process Pooling**: Reuse interpreters where possible
 - **Memory Management**: Automatic cleanup of completed processes
 - **Timeout Handling**: Prevent resource leaks from hanging processes
