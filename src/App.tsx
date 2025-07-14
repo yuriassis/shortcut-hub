@@ -520,7 +520,7 @@ function ShortcutCard({ shortcut, onExecute, onEdit, onDelete, serverOnline }: S
             'bg-purple-600 hover:bg-purple-700'
           }`}
         >
-          <Play size={10} />
+          <Play size={14} />
         </button>
       </div>
     </div>
