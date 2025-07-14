@@ -2,13 +2,6 @@
 
 A powerful local application for organizing and executing your favorite shortcuts, scripts, and programs from a beautiful web interface.
 
-![Shortcut Hub Interface](https://images.pexels.com/photos/1181298/pexels-photo-1181298.jpeg?auto=compress&cs=tinysrgb&w=800&h=400&fit=crop)
-
-## Demo
-
-![Shortcut Hub Demo](https://images.pexels.com/photos/1181244/pexels-photo-1181244.jpeg?auto=compress&cs=tinysrgb&w=600&h=300&fit=crop)
-*Creating and executing shortcuts with real-time feedback*
-
 ## Features
 
 - 🚀 **Execute Anything**: Run system programs, scripts, URLs, and web applications
@@ -22,20 +15,6 @@ A powerful local application for organizing and executing your favorite shortcut
 - 🛡️ **Secure**: Built-in validation and timeout protection
 - 📱 **Responsive Design**: Optimized for all screen sizes with up to 8 columns
 - 🎨 **Visual Type Coding**: Color-coded stripes indicate shortcut types
-
-## Screenshots
-
-### Main Interface
-![Main Interface](https://images.pexels.com/photos/1181467/pexels-photo-1181467.jpeg?auto=compress&cs=tinysrgb&w=800&h=500&fit=crop)
-*Compact card layout with collapsible categories and visual type indicators*
-
-### Shortcut Creation Modal
-![Shortcut Creation](https://images.pexels.com/photos/1181354/pexels-photo-1181354.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop)
-*Easy-to-use modal for creating and editing shortcuts*
-
-### Responsive Design
-![Responsive Layout](https://images.pexels.com/photos/1181316/pexels-photo-1181316.jpeg?auto=compress&cs=tinysrgb&w=800&h=300&fit=crop)
-*Adaptive grid layout showing 2-8 columns based on screen size*
 
 ## Quick Start
 
@@ -89,7 +68,6 @@ A powerful local application for organizing and executing your favorite shortcut
 ### Interface Features
 
 #### Compact Card Design
-![Compact Cards](https://images.pexels.com/photos/1181373/pexels-photo-1181373.jpeg?auto=compress&cs=tinysrgb&w=600&h=300&fit=crop)
 
 - **Visual Type Indicators**: Colored stripes on the right edge of each card
   - 🟢 **Green**: URLs and Web Apps
@@ -99,7 +77,6 @@ A powerful local application for organizing and executing your favorite shortcut
 - **Quick Actions**: Large execution button with edit/delete options
 
 #### Collapsible Categories
-![Collapsible Categories](https://images.pexels.com/photos/1181396/pexels-photo-1181396.jpeg?auto=compress&cs=tinysrgb&w=600&h=250&fit=crop)
 
 - **Click to Toggle**: Click category headers to expand/collapse sections
 - **Visual Indicators**: Chevron arrows show current state
@@ -107,15 +84,12 @@ A powerful local application for organizing and executing your favorite shortcut
 - **Responsive Grid**: 2-8 columns depending on screen size
 
 #### Search and Filter
-![Search Feature](https://images.pexels.com/photos/1181412/pexels-photo-1181412.jpeg?auto=compress&cs=tinysrgb&w=600&h=200&fit=crop)
 
 - **Instant Search**: Filter shortcuts by name, description, category, or type
 - **Real-time Results**: Updates as you type
 - **Cross-category Search**: Finds shortcuts across all categories
-### Shortcut Types & Examples
 
-![Shortcut Types](https://images.pexels.com/photos/1181263/pexels-photo-1181263.jpeg?auto=compress&cs=tinysrgb&w=800&h=400&fit=crop)
-*Different shortcut types with their visual indicators*
+### Shortcut Types & Examples
 
 #### System Commands
 ```
@@ -160,8 +134,6 @@ Type: Web App
 
 ### Server Status
 
-![Server Status](https://images.pexels.com/photos/1181432/pexels-photo-1181432.jpeg?auto=compress&cs=tinysrgb&w=400&h=150&fit=crop)
-
 The application shows real-time server status:
 - 🟢 **Online**: Backend is running and ready
 - 🔴 **Offline**: Backend is not accessible
@@ -169,8 +141,6 @@ The application shows real-time server status:
 - **System Info**: Displays platform and architecture when connected
 
 ## Configuration
-
-![Configuration](https://images.pexels.com/photos/1181289/pexels-photo-1181289.jpeg?auto=compress&cs=tinysrgb&w=600&h=300&fit=crop)
 
 ### Data Storage
 
@@ -257,8 +227,6 @@ export default defineConfig({
 - Use forward slashes in paths: `/home/user/scripts/script.py`
 
 ## Troubleshooting
-
-![Troubleshooting](https://images.pexels.com/photos/1181445/pexels-photo-1181445.jpeg?auto=compress&cs=tinysrgb&w=600&h=250&fit=crop)
 
 ### Common Issues
 
